@@ -2,8 +2,16 @@ package gserrors
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"runtime"
+)
+
+//Programming by Contract error codes
+var (
+	ErrRequire = errors.New("PBC precondition error")
+	ErrAssert  = errors.New("PBC assert error")
+	ErrEnsure  = errors.New("PBC postcondition error")
 )
 
 //GSError gsdocker error interface
@@ -24,7 +32,11 @@ func (err *errorHost) Error() string {
 		return fmt.Sprintf("%s\n%s", err.origin.Error(), err.stack)
 	}
 
-	return fmt.Sprintf("%s\n%s", err.message, err.stack)
+	if err.origin != nil {
+		return fmt.Sprintf("%s\n%s", err.message, err.stack)
+	}
+
+	return fmt.Sprintf("<unknown error>\n%s", err.stack)
 }
 
 func (err *errorHost) Stack() string {
@@ -72,5 +84,27 @@ func Newf(err error, fmtstring string, args ...interface{}) GSError {
 		origin:  err,
 		stack:   string(stack()),
 		message: fmt.Sprintf(fmtstring, args...),
+	}
+}
+
+//Require PBC require check
+func Require(status bool, fmtstring string, args ...interface{}) {
+	if !status {
+		Panicf(ErrRequire, fmtstring, args...)
+	}
+}
+
+//Assert PBC assert check
+func Assert(status bool, fmtstring string, args ...interface{}) {
+	if !status {
+		Panicf(ErrAssert, fmtstring, args...)
+	}
+}
+
+//Ensure PBC postcondition check
+//example: defer Ensure(a != 1,"test %s","ensure")
+func Ensure(status bool, fmtstring string, args ...interface{}) {
+	if !status {
+		Panicf(ErrEnsure, fmtstring, args...)
 	}
 }
