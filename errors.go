@@ -29,12 +29,12 @@ type errorHost struct {
 }
 
 func (err *errorHost) Error() string {
-	if err.message == "" {
-		return fmt.Sprintf("%s\n%s", err.origin.Error(), err.stack)
+	if err.message != "" {
+		return fmt.Sprintf("%s\nbacktrace:\n%s", err.message, err.stack)
 	}
 
 	if err.origin != nil {
-		return fmt.Sprintf("%s\n%s", err.message, err.stack)
+		return fmt.Sprintf("%s\nbacktrace:\n%s", err.origin.Error(), err.stack)
 	}
 
 	return fmt.Sprintf("<unknown error>\n%s", err.stack)
