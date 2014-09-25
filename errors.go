@@ -16,9 +16,10 @@ var (
 
 //GSError gsdocker error interface
 type GSError interface {
-	error          //inher from system error interface
-	Stack() string //get stack trace message
-	Origin() error //get origin error object
+	error            //inher from system error interface
+	Stack() string   //get stack trace message
+	Origin() error   //get origin error object
+	NewOrigin(error) //reset the origin error
 }
 
 type errorHost struct {
@@ -45,6 +46,10 @@ func (err *errorHost) Stack() string {
 
 func (err *errorHost) Origin() error {
 	return err.origin
+}
+
+func (err *errorHost) NewOrigin(target error) {
+	err.origin = target
 }
 
 func stack() []byte {
@@ -103,8 +108,8 @@ func Assert(status bool, fmtstring string, args ...interface{}) {
 
 //Ensure PBC postcondition check
 //example: defer Ensure(a != 1,"test %s","ensure")
-func Ensure(status bool, fmtstring string, args ...interface{}) {
-	if !status {
+func Ensure(condition func() bool, fmtstring string, args ...interface{}) {
+	if !condition() {
 		Panicf(ErrEnsure, fmtstring, args...)
 	}
 }
