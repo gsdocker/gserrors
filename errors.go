@@ -9,9 +9,10 @@ import (
 
 //Programming by Contract error codes
 var (
-	ErrRequire = errors.New("PBC precondition error")
-	ErrAssert  = errors.New("PBC assert error")
-	ErrEnsure  = errors.New("PBC postcondition error")
+	ErrRequire  = errors.New("PBC precondition error")
+	ErrAssert   = errors.New("PBC assert error")
+	ErrEnsure   = errors.New("PBC postcondition error")
+	ErrOverload = errors.New("service overload")
 )
 
 //GSError gsdocker error interface
