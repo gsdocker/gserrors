@@ -34,7 +34,7 @@ func (err *errorHost) Error() string {
 
 		if err.origin != nil {
 			return fmt.Sprintf(
-				"%s\nbacktrace:\n%sbacktrace error:\n%s",
+				"%s\nbacktrace:\n%sbacktrace error:\n\t%s",
 				err.message,
 				err.stack,
 				err.origin.Error(),
@@ -52,7 +52,7 @@ func (err *errorHost) Error() string {
 		)
 	}
 
-	return fmt.Sprintf("<unknown error>\n%s", err.stack)
+	return fmt.Sprintf("<unknown error>\n\t%s", err.stack)
 }
 
 func (err *errorHost) Stack() string {
